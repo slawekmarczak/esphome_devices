@@ -33,7 +33,7 @@ Wymagane sa tez integracja z Home Assistant przez API oraz zdalne aktualizacje O
 
   ### Hardware
 
-  ESP32 klasy dev board.
+  WT32-ETH01 (LAN8720 Ethernet PHY).
   Czujnik DYP A02 z komunikacja UART w trybie automatycznym.
   Zasilanie modulu zgodnie z jego specyfikacja, ze wspolna masa z ESP32.
 
@@ -44,6 +44,9 @@ Wymagane sa tez integracja z Home Assistant przez API oraz zdalne aktualizacje O
   - Sensor VCC -> zasilanie zgodne z wersja modulu
   - Sensor GND -> masa wspolna
 
+  Ethernet LAN8720 (wbudowany w WT32-ETH01):
+  - MDC: GPIO23, MDIO: GPIO18, CLK: GPIO0, PHY addr: 1, Power: GPIO16
+
   ### Funkcje firmware
 
   - Odczyt odleglosci z DYP A02 przez UART 9600
@@ -51,7 +54,7 @@ Wymagane sa tez integracja z Home Assistant przez API oraz zdalne aktualizacje O
   - Web server z widokiem encji
   - API dla Home Assistant
   - OTA do aktualizacji firmware
-  - Fallback AP i captive portal na wypadek problemow z Wi-Fi
+  - Ethernet jako domyślny interfejs sieciowy (LAN8720)
 
   ### Encje ESPHome
 
@@ -83,10 +86,12 @@ Wymagane sa tez integracja z Home Assistant przez API oraz zdalne aktualizacje O
 
   ### Otwarte pytania
 
-  - Czy sensor pracuje w wariancie UART auto zgodnym z ramka A02YYUW.
+  - ~~Czy sensor pracuje w wariancie UART auto zgodnym z ramka A02YYUW.~~ TAK — odczyty poprawne, dane w mm.
   - Jaka jest wysokosc zbiornika, jesli ma byc liczony poziom procentowy.
-  - Czy potrzebne sa filtry wygładzajace, czy odczyt jest wystarczajaco stabilny.
+  - ~~Czy potrzebne sa filtry wygładzajace, czy odczyt jest wystarczajaco stabilny.~~ Stabilny ~0.679 m, filtr lambda mm->m wystarcza.
 
   ### Historia zmian
 
   - 2026-05-07: Utworzono spec dla monitora zbiornika i zalozono integracje UART dla DYP A02.
+  - Kompilacja + OTA OK. Dodano filtr `lambda: return x / 1000.0` do konwersji mm->m. Odczyty stabilne.
+  - 2026-05-07: Zmiana z WiFi na Ethernet (WT32-ETH01, LAN8720). Usunięto wifi, captive_portal. Ethernet jako jedyny interfejs. Flash przez OTA z WiFi → Ethernet, urządzenie online na 192.168.33.178.
