@@ -1,0 +1,14 @@
+# Local ESPHome/PlatformIO build output. The build server in ~/esphome_agent
+# owns compilation; production device repos should not commit these.
+**/.esphome/
+**/.pioenvs/
+**/.piolibdeps/
+
+# Secrets
+secrets.yaml
+*.secret.yaml
+
+# Local editor/agent caches
+.codex/
+.agents/
+
