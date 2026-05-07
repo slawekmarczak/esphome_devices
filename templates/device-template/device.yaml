@@ -1,0 +1,10 @@
+substitutions:
+  device_name: device-name
+  friendly_name: Device Name
+
+esphome:
+  name: ${device_name}
+  friendly_name: ${friendly_name}
+
+# Replace this placeholder with the device-specific ESPHome configuration.
+

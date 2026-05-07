@@ -36,3 +36,14 @@ documentation.
 
 Reusable module or board knowledge belongs in `~/esphome_agent/Modules`, not in
 this repository.
+
+## Templates
+
+Copy new device projects from:
+
+```text
+templates/device-template/
+```
+
+The local template mirrors the expected device layout and keeps the project
+structure visible inside this repository.

@@ -7,7 +7,7 @@ Use this repo for production ESPHome device projects. Use the sibling
 
 ```bash
 DEVICE=my-device-name
-cp -r ~/esphome_agent/templates/esphome_devices/devices/example-device \
+cp -r ~/esphome_devices/templates/device-template \
   ~/esphome_devices/devices/$DEVICE
 ```
 
@@ -40,4 +40,3 @@ The MCP path for the YAML is:
 
 The agent should compile, flash, reset, read logs, and check API/web through
 `~/esphome_agent` MCP endpoints. It should not build locally in this repo.
-
