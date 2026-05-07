@@ -47,3 +47,4 @@ templates/device-template/
 
 The local template mirrors the expected device layout and keeps the project
 structure visible inside this repository.
+# esphome_devices
