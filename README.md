@@ -12,6 +12,9 @@ Agents working in this repository must read `AGENTS.md` first. They should use
 the MCP/build/flash pipeline from `~/esphome_agent` and must not bootstrap a
 local PlatformIO environment here.
 
+This repository is the GitHub-backed device repo. The `origin` remote points to
+`git@github.com:slawekmarczak/esphome_devices.git`.
+
 ## Layout
 
 ```text

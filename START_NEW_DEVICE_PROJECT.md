@@ -40,3 +40,6 @@ The MCP path for the YAML is:
 
 The agent should compile, flash, reset, read logs, and check API/web through
 `~/esphome_agent` MCP endpoints. It should not build locally in this repo.
+
+After each validated increment the agent should commit and push to the `origin`
+remote of `~/esphome_devices`.

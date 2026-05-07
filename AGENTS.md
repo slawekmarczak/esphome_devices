@@ -57,7 +57,8 @@ When starting or resuming work on a device:
 4. Update the `Agent-Maintained Spec` section before changing firmware.
 5. Use the MCP pipeline from `~/esphome_agent` for validation.
 6. Record meaningful test results in `devices/<device-name>/test-log.md`.
-7. Commit and push after a validated, working change.
+7. Commit and push after every validated, working increment. Do not batch
+   multiple finished increments unless the user explicitly asks for it.
 
 ## PROJECT.md Contract
 
@@ -123,7 +124,7 @@ Act autonomously within the existing pipeline:
 - read UART logs
 - check HTTP/web server and Native API
 - update project documentation
-- commit and push validated changes
+- commit and push after each validated increment
 
 Ask the user only when:
 
