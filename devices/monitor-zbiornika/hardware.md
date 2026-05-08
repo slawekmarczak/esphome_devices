@@ -30,8 +30,9 @@ Charakterystyka do przeliczenia:
 
 DS18B20 na magistrali 1-Wire.
 Magistrala na GPIO33 obsluguje docelowo dwa czujniki na tych samych trzech przewodach.
-W firmware wlaczony jest wewnetrzny pull-up GPIO33.
-Zewnetrzny rezystor podciagajacy 4.7 kOhm miedzy DATA/GPIO33 i 3V3 jest nadal zalecany przy dluzszych przewodach lub niestabilnym odczycie.
+Na WT32-ETH01 ten pin jest zwykle opisany na module jako `485_EN`, nie jako `GPIO33`.
+W firmware wlaczony jest wewnetrzny pull-up GPIO33/485_EN.
+Zewnetrzny rezystor podciagajacy 4.7 kOhm miedzy DATA/GPIO33/485_EN i 3V3 jest nadal zalecany przy dluzszych przewodach lub niestabilnym odczycie.
 
 ## Polaczenia
 
@@ -42,7 +43,7 @@ Zewnetrzny rezystor podciagajacy 4.7 kOhm miedzy DATA/GPIO33 i 3V3 jest nadal za
 - FS400A-G1 yellow/signal -> ESP32 GPIO32
 - FS400A-G1 red/VCC -> 5V lub zasilanie zgodne z czujnikiem
 - FS400A-G1 black/GND -> masa wspolna
-- DS18B20 DATA -> ESP32 GPIO33 z wewnetrznym pull-up
+- DS18B20 DATA -> ESP32 GPIO33 / pin `485_EN` z wewnetrznym pull-up
 - DS18B20 VDD -> ESP32 3V3
 - DS18B20 GND -> masa wspolna
 
@@ -52,6 +53,6 @@ Zewnetrzny rezystor podciagajacy 4.7 kOhm miedzy DATA/GPIO33 i 3V3 jest nadal za
 - Na starcie warto sprawdzic, czy frame output jest stabilny i czy nie trzeba odwracac linii RX/TX
 - GPIO5 to pin strapping — nalezy monitorowac stabilnosc bootowania
 - GPIO32 wybrany dla FS400A-G1, bo nie koliduje z Ethernetem LAN8720, UART DYP A02 ani pinami strapping.
-- GPIO33 wybrany dla DS18B20, bo jest wolnym pinem wejscia/wyjscia i nadaje sie na magistrale 1-Wire.
+- GPIO33/485_EN wybrany dla DS18B20, bo jest wolnym pinem wejscia/wyjscia i nadaje sie na magistrale 1-Wire. Jesli konkretny egzemplarz nie ma wygodnie dostepnego pinu `485_EN`, najlepsza alternatywa to GPIO14.
 - Jesli FS400A-G1 jest zasilany z 5V i jego wyjscie nie jest otwartym kolektorem z pull-up do 3V3, trzeba zastosowac dzielnik lub konwerter poziomow przed GPIO32.
 - Drugi DS18B20 nalezy dodac do YAML po odczytaniu adresow czujnikow z logow ESPHome albo po potwierdzeniu stabilnego mapowania indeksow.

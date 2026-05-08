@@ -66,10 +66,10 @@ Wymagane sa tez integracja z Home Assistant przez API oraz zdalne aktualizacje O
   - FS400A-G1 Signal (zolty) -> ESP32 GPIO32
   - FS400A-G1 VCC (czerwony) -> 5V lub zasilanie zgodne z czujnikiem
   - FS400A-G1 GND (czarny) -> masa wspolna
-  - DS18B20 DATA -> ESP32 GPIO33 z wlaczonym wewnetrznym pull-up
+  - DS18B20 DATA -> ESP32 GPIO33 / pin `485_EN` z wlaczonym wewnetrznym pull-up
   - DS18B20 VDD -> 3V3
   - DS18B20 GND -> masa wspolna
-  - Zalecany dodatkowy rezystor podciagajacy 4.7 kOhm miedzy GPIO33/DATA i 3V3 przy dluzszych przewodach lub niestabilnym odczycie
+  - Zalecany dodatkowy rezystor podciagajacy 4.7 kOhm miedzy GPIO33/485_EN/DATA i 3V3 przy dluzszych przewodach lub niestabilnym odczycie
 
   Ethernet LAN8720 (wbudowany w WT32-ETH01):
   - MDC: GPIO23, MDIO: GPIO18, CLK: GPIO0, PHY addr: 1, Power: GPIO16
@@ -117,7 +117,7 @@ Wymagane sa tez integracja z Home Assistant przez API oraz zdalne aktualizacje O
   - FS400A-G1 podlaczamy do GPIO32, bo jest wolnym pinem wejscia/wyjscia na ESP32 i nie koliduje z LAN8720, UART DYP A02 ani pinami strapping.
   - Przeplyw FS400A-G1 liczymy z charakterystyki `Hz = 4.8 * Q[L/min]`, czyli `Q = pulses_per_min / 288`.
   - Sume przeplywu liczymy jako `litry = impulsy / 288`.
-  - DS18B20 podlaczamy do GPIO33 jako wspolna magistrala 1-Wire dla dwoch czujnikow, z wlaczonym wewnetrznym pull-up; zewnetrzny pull-up 4.7 kOhm do 3V3 pozostaje zalecany dla dluzszych przewodow.
+  - DS18B20 podlaczamy do GPIO33, opisanego na WT32-ETH01 jako `485_EN`, jako wspolna magistrala 1-Wire dla dwoch czujnikow, z wlaczonym wewnetrznym pull-up; zewnetrzny pull-up 4.7 kOhm do 3V3 pozostaje zalecany dla dluzszych przewodow.
   - Pierwszy DS18B20 bedzie uruchomiony bez adresu; drugi zostanie dodany jako stabilna encja po odczytaniu adresow z logow albo po podlaczeniu obu czujnikow.
   - Na razie nie liczymy poziomu procentowego zbiornika, bo nie znamy wysokosci referencyjnej.
   - Nie dodajemy dodatkowych encji jakosciowych bez potwierdzenia z rzeczywistego outputu czujnika.

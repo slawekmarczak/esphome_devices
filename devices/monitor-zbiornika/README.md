@@ -26,4 +26,4 @@ ESPHome dla modulu DYP A02 podlaczonego po UART.
 ## Pinout dodatkowych czujnikow
 
 - FS400A-G1 signal -> GPIO32
-- DS18B20 DATA -> GPIO33 z wewnetrznym pull-up; zewnetrzny 4.7 kOhm do 3V3 zalecany przy dluzszych przewodach
+- DS18B20 DATA -> GPIO33 / pin `485_EN` z wewnetrznym pull-up; zewnetrzny 4.7 kOhm do 3V3 zalecany przy dluzszych przewodach
