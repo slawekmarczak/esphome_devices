@@ -44,6 +44,15 @@ uart:
   baud_rate: 9600
   stop_bits: 1
 
+one_wire:
+  - platform: gpio
+    id: ds18b20_bus
+    pin:
+      number: GPIO33
+      mode:
+        input: true
+        pullup: true
+
 sensor:
   - platform: a02yyuw
     uart_id: tank_uart
@@ -56,3 +65,37 @@ sensor:
     filters:
       - lambda: return x / 1000.0;
       - throttle: 1s
+
+  - platform: pulse_meter
+    id: przeplyw_wody
+    name: "Przeplyw wody"
+    pin:
+      number: GPIO32
+      mode:
+        input: true
+        pullup: true
+    internal_filter: 100us
+    timeout: 10s
+    unit_of_measurement: "L/min"
+    accuracy_decimals: 2
+    device_class: volume_flow_rate
+    state_class: measurement
+    filters:
+      - multiply: 0.0034722222
+      - throttle_average: 5s
+    total:
+      name: "Przeplyw wody suma"
+      id: przeplyw_wody_suma
+      unit_of_measurement: "L"
+      accuracy_decimals: 2
+      device_class: volume
+      state_class: total_increasing
+      filters:
+        - multiply: 0.0034722222
+
+  - platform: dallas_temp
+    one_wire_id: ds18b20_bus
+    name: "Temperatura zbiornika 1"
+    id: temperatura_zbiornika_1
+    resolution: 12
+    update_interval: 30s
