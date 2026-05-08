@@ -89,7 +89,9 @@ Wymagane sa tez integracja z Home Assistant przez API oraz zdalne aktualizacje O
 
   - Sensor odleglosci w metrach, widoczny w web_server i Home Assistant
   - Sensor przeplywu w L/min, widoczny w web_server i Home Assistant
-  - Sensor sumarycznego przeplywu w litrach, widoczny w web_server i Home Assistant
+  - Sensor przeplywu w sesji w litrach, widoczny w web_server i Home Assistant
+  - Sensor trwalego sumarycznego przeplywu w litrach, widoczny w web_server i Home Assistant
+  - Przycisk resetu trwalego sumarycznego przeplywu, widoczny w web_server i Home Assistant
   - Sensor temperatury DS18B20 nr 1, widoczny w web_server i Home Assistant
   - Sensor temperatury DS18B20 nr 2, docelowo po podaniu adresu lub potwierdzeniu indeksu na magistrali 1-Wire
 
@@ -117,6 +119,9 @@ Wymagane sa tez integracja z Home Assistant przez API oraz zdalne aktualizacje O
   - FS400A-G1 podlaczamy do GPIO32, bo jest wolnym pinem wejscia/wyjscia na ESP32 i nie koliduje z LAN8720, UART DYP A02 ani pinami strapping.
   - Przeplyw FS400A-G1 liczymy z charakterystyki `Hz = 4.8 * Q[L/min]`, czyli `Q = pulses_per_min / 288`.
   - Sume przeplywu liczymy jako `litry = impulsy / 288`.
+  - `Przeplyw wody suma` jest licznikiem trwalym przez restart i zanik zasilania: stan jest trzymany w `global` z `restore_value`, a zapis flash ogranicza `preferences.flash_write_interval: 10min`.
+  - Anti-wear: impulsy sesji sa liczone w RAM, a globalny licznik jest aktualizowany co 60 s tylko po przyroscie co najmniej 1 L; ESPHome zapisuje preferencje do flash nie czesciej niz co 10 minut. Przy naglym zaniku zasilania mozliwa jest utrata nieutrwalonego przyrostu ponizej progu, w zamian za ograniczenie zuzycia flash.
+  - Reset licznika sumarycznego jest dostepny jako encja `Reset przeplywu wody suma` w Home Assistant i web_server.
   - DS18B20 podlaczamy do GPIO33, opisanego na WT32-ETH01 jako `485_EN`, jako wspolna magistrala 1-Wire dla dwoch czujnikow, z wlaczonym wewnetrznym pull-up; zewnetrzny pull-up 4.7 kOhm do 3V3 pozostaje zalecany dla dluzszych przewodow.
   - Pierwszy DS18B20 bedzie uruchomiony bez adresu; drugi zostanie dodany jako stabilna encja po odczytaniu adresow z logow albo po podlaczeniu obu czujnikow.
   - Na razie nie liczymy poziomu procentowego zbiornika, bo nie znamy wysokosci referencyjnej.
@@ -136,3 +141,4 @@ Wymagane sa tez integracja z Home Assistant przez API oraz zdalne aktualizacje O
   - Kompilacja + OTA OK. Dodano filtr `lambda: return x / 1000.0` do konwersji mm->m. Odczyty stabilne.
   - 2026-05-07: Zmiana z WiFi na Ethernet (WT32-ETH01, LAN8720). Usunięto wifi, captive_portal. Ethernet jako jedyny interfejs. Flash przez OTA z WiFi → Ethernet, urządzenie online na 192.168.33.178.
   - 2026-05-08: Zaplanowano FS400A-G1 na GPIO32 i DS18B20 1-Wire na GPIO33.
+  - 2026-05-08: Zaplanowano trwaly licznik sumy przeplywu z ograniczeniem zapisow flash.

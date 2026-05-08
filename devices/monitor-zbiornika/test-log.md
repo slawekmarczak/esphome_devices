@@ -25,9 +25,16 @@
 - [x] Kompilacja YAML przez MCP — OK, 17 s. Ostrzezenia tylko dla znanych pinow strapping GPIO0/GPIO5.
 - [x] Flash OTA przez MCP — OK, 6 s.
 - [x] Test z jednym DS18B20 podlaczonym do GPIO33/485_EN — OK po resecie, web_server pokazal `29.3125 °C` / `29.3 °C`.
+- [x] Dodano trwaly licznik `Przeplyw wody suma` z anti-wear: zapis globalnego stanu po przyroscie min. 1 L, flash write interval 10 min.
+- [x] Dodano encje resetu `Reset przeplywu wody suma`.
+- [x] Kompilacja YAML przez MCP po zmianie licznika — OK, 39 s. Ostrzezenia tylko dla znanych pinow strapping GPIO0/GPIO5.
+- [x] Flash OTA na DUT po zmianie licznika — OK, 6 s.
+- [x] Test web_server na DUT — `Przeplyw wody sesja` 0.00 L, `Przeplyw wody suma` 0.00 L, `Przeplyw wody` 0.00 L/min po timeout, `Temperatura zbiornika 1` 28.1 °C, `Odleglosc w zbiorniku` 0.68 m.
+- [x] Test resetu sumy przez web_server — POST `/button/reset_przeplywu_wody_suma/press` OK, suma pozostala 0.00 L.
 
 ### Uwagi
 
 - FS400A-G1 przeliczany wg `Hz = 4.8 * L/min`, czyli `L/min = pulses/min / 288` i `L = pulses / 288`.
 - Wewnetrzny pull-up GPIO33 wystarcza do pierwszych testow na krotkich przewodach. Przy dluzszych przewodach lub niestabilnym odczycie dodac zewnetrzny pull-up 4.7 kOhm do 3V3.
 - Przed resetem endpoint temperatury zwracal `NA`; po resecie sensor zostal wykryty i publikuje odczyt.
+- Trwaly licznik sumy minimalizuje zuzycie flash kosztem mozliwej utraty nieutrwalonego przyrostu ponizej 1 L przy naglym zaniku zasilania.

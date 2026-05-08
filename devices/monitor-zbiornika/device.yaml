@@ -37,6 +37,9 @@ ethernet:
 web_server:
   port: 80
 
+preferences:
+  flash_write_interval: 10min
+
 uart:
   id: tank_uart
   rx_pin: GPIO5
@@ -52,6 +55,45 @@ one_wire:
       mode:
         input: true
         pullup: true
+
+globals:
+  - id: przeplyw_wody_total_persisted_l
+    type: float
+    restore_value: true
+    initial_value: '0.0'
+  - id: przeplyw_wody_session_checkpoint_l
+    type: float
+    restore_value: false
+    initial_value: '0.0'
+
+interval:
+  - interval: 60s
+    then:
+      - lambda: |-
+          const float current_session_l = id(przeplyw_wody_sesja).state;
+          if (isnan(current_session_l)) {
+            return;
+          }
+          if (current_session_l < id(przeplyw_wody_session_checkpoint_l)) {
+            id(przeplyw_wody_session_checkpoint_l) = current_session_l;
+            return;
+          }
+          const float delta_l = current_session_l - id(przeplyw_wody_session_checkpoint_l);
+          if (delta_l >= 1.0f) {
+            id(przeplyw_wody_total_persisted_l) += delta_l;
+            id(przeplyw_wody_session_checkpoint_l) = current_session_l;
+          }
+
+button:
+  - platform: template
+    name: "Reset przeplywu wody suma"
+    id: reset_przeplywu_wody_suma
+    on_press:
+      - lambda: |-
+          const float current_session_l = id(przeplyw_wody_sesja).state;
+          id(przeplyw_wody_total_persisted_l) = 0.0f;
+          id(przeplyw_wody_session_checkpoint_l) = isnan(current_session_l) ? 0.0f : current_session_l;
+          id(przeplyw_wody_suma).publish_state(0.0f);
 
 sensor:
   - platform: a02yyuw
@@ -84,14 +126,32 @@ sensor:
       - multiply: 0.0034722222
       - throttle_average: 5s
     total:
-      name: "Przeplyw wody suma"
-      id: przeplyw_wody_suma
+      name: "Przeplyw wody sesja"
+      id: przeplyw_wody_sesja
       unit_of_measurement: "L"
       accuracy_decimals: 2
       device_class: volume
       state_class: total_increasing
       filters:
         - multiply: 0.0034722222
+
+  - platform: template
+    id: przeplyw_wody_suma
+    name: "Przeplyw wody suma"
+    unit_of_measurement: "L"
+    accuracy_decimals: 2
+    device_class: volume
+    state_class: total_increasing
+    update_interval: 10s
+    lambda: |-
+      const float current_session_l = id(przeplyw_wody_sesja).state;
+      if (isnan(current_session_l)) {
+        return id(przeplyw_wody_total_persisted_l);
+      }
+      if (current_session_l < id(przeplyw_wody_session_checkpoint_l)) {
+        return id(przeplyw_wody_total_persisted_l);
+      }
+      return id(przeplyw_wody_total_persisted_l) + current_session_l - id(przeplyw_wody_session_checkpoint_l);
 
   - platform: dallas_temp
     one_wire_id: ds18b20_bus

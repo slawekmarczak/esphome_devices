@@ -6,6 +6,8 @@ ESPHome dla modulu DYP A02 podlaczonego po UART.
 
 - mierzy odleglosc od czujnika do lustra cieczy
 - mierzy przeplyw wody z FS400A-G1
+- utrzymuje trwaly licznik sumarycznego przeplywu z ograniczonym zapisem flash
+- udostepnia przycisk resetu sumarycznego przeplywu
 - mierzy temperature z DS18B20 na magistrali 1-Wire
 - wystawia encje w Home Assistant
 - pokazuje odczyt na web_server ESPHome
