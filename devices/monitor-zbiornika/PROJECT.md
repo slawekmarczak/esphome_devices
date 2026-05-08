@@ -125,6 +125,7 @@ Wymagane sa tez integracja z Home Assistant przez API oraz zdalne aktualizacje O
   - Anti-wear: impulsy sesji sa liczone w RAM, a globalny licznik jest aktualizowany co 60 s tylko po przyroscie co najmniej 1 L; ESPHome zapisuje preferencje do flash nie czesciej niz co 10 minut. Przy naglym zaniku zasilania mozliwa jest utrata nieutrwalonego przyrostu ponizej progu, w zamian za ograniczenie zuzycia flash.
   - Reset licznika sumarycznego jest dostepny jako encja `Reset przeplywu wody suma` w Home Assistant i web_server.
   - Web server uzywa `version: 3`, bo to najnowszy interfejs ESPHome z HA-styling, grupowaniem encji i wykresami wartosci sensorow.
+  - Native API ma `reboot_timeout: 0s`, zeby urzadzenie nie restartowalo sie co 15 minut, gdy Home Assistant albo inny klient API nie jest podlaczony.
   - DS18B20 podlaczamy do GPIO33, opisanego na WT32-ETH01 jako `485_EN`, jako wspolna magistrala 1-Wire dla dwoch czujnikow, z wlaczonym wewnetrznym pull-up; zewnetrzny pull-up 4.7 kOhm do 3V3 pozostaje zalecany dla dluzszych przewodow.
   - Pierwszy DS18B20 bedzie uruchomiony bez adresu; drugi zostanie dodany jako stabilna encja po odczytaniu adresow z logow albo po podlaczeniu obu czujnikow.
   - Na razie nie liczymy poziomu procentowego zbiornika, bo nie znamy wysokosci referencyjnej.
@@ -147,3 +148,4 @@ Wymagane sa tez integracja z Home Assistant przez API oraz zdalne aktualizacje O
   - 2026-05-08: Zaplanowano trwaly licznik sumy przeplywu z ograniczeniem zapisow flash.
   - 2026-05-08: Zaplanowano web_server v3 z grupami encji: Zbiornik, Przeplyw, Serwis.
   - 2026-05-08: Zaplanowano wlasny parser UART dla DYP A02, zeby ramki z odlegloscia 0-3 cm publikowaly `0.00 m` zamiast warningow `Invalid data read from sensor`.
+  - 2026-05-08: Wylaczono domyslny reboot Native API przy braku klientow (`reboot_timeout: 0s`).

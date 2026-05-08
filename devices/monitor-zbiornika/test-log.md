@@ -40,6 +40,11 @@
 - [x] Flash OTA na DUT po zmianie parsera DYP A02 — OK, 6 s.
 - [x] Test web_server na DUT po zmianie parsera — odleglosc publikuje 0.643-0.644 m, temperatura 26.7 °C, suma przeplywu 0.00 L.
 - [x] Test logow UART przez MCP po zmianie parsera — brak linii i brak bledow w 25 s odczytu; warning `a02yyuw.sensor` nie wystapil w odczycie MCP.
+- [x] Zdiagnozowano cykliczne restarty co ok. 15 min z logiem `[api:127] No clients; rebooting` / `[app:247] Forcing a reboot` jako domyslny watchdog Native API, a nie crash/brownout.
+- [x] Ustawiono `api.reboot_timeout: 0s`, zeby brak klienta Home Assistant/API nie wymuszal restartu urzadzenia.
+- [x] Kompilacja YAML przez MCP po zmianie API reboot timeout — OK, 18 s. Ostrzezenia tylko dla znanych pinow strapping GPIO0/GPIO5.
+- [x] Flash OTA na DUT po zmianie API reboot timeout — OK, 6 s.
+- [x] Szybki test po OTA — web_server v3 odpowiada, odleglosc 0.65 m, temperatura 26.8 °C, suma przeplywu 0.00 L.
 
 ### Uwagi
 
@@ -49,3 +54,4 @@
 - Trwaly licznik sumy minimalizuje zuzycie flash kosztem mozliwej utraty nieutrwalonego przyrostu ponizej 1 L przy naglym zaniku zasilania.
 - Web server v3 dostarcza wykresy historii sensorow po kliknieciu encji w interfejsie ESPHome.
 - Bliski zakres DYP A02 `<=30 mm` jest teraz mapowany na `0.00 m`. Test z fizycznym dystansem 0-3 cm wymaga ustawienia przeszkody przy czujniku; zdalnie potwierdzono normalny odczyt i brak komponentu `a02yyuw` w firmware.
+- Brak klienta Native API nie powinien juz restartowac urzadzenia. Pelne potwierdzenie runtime wymaga obserwacji ponad 15 minut po OTA.

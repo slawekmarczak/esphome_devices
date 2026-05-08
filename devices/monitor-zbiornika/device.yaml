@@ -17,6 +17,7 @@ logger:
   level: INFO
 
 api:
+  reboot_timeout: 0s
   encryption:
     key: !secret monitor_zbiornika_api_key
 
