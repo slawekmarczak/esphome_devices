@@ -81,6 +81,7 @@ Wymagane sa tez integracja z Home Assistant przez API oraz zdalne aktualizacje O
   - Odczyt temperatury z DS18B20 przez 1-Wire
   - Publikacja odczytu jako sensor ESPHome
   - Web server z widokiem encji
+  - Web server v3 z HA-styling, grupami encji i wykresami sensorow po kliknieciu
   - API dla Home Assistant
   - OTA do aktualizacji firmware
   - Ethernet jako domyślny interfejs sieciowy (LAN8720)
@@ -122,6 +123,7 @@ Wymagane sa tez integracja z Home Assistant przez API oraz zdalne aktualizacje O
   - `Przeplyw wody suma` jest licznikiem trwalym przez restart i zanik zasilania: stan jest trzymany w `global` z `restore_value`, a zapis flash ogranicza `preferences.flash_write_interval: 10min`.
   - Anti-wear: impulsy sesji sa liczone w RAM, a globalny licznik jest aktualizowany co 60 s tylko po przyroscie co najmniej 1 L; ESPHome zapisuje preferencje do flash nie czesciej niz co 10 minut. Przy naglym zaniku zasilania mozliwa jest utrata nieutrwalonego przyrostu ponizej progu, w zamian za ograniczenie zuzycia flash.
   - Reset licznika sumarycznego jest dostepny jako encja `Reset przeplywu wody suma` w Home Assistant i web_server.
+  - Web server uzywa `version: 3`, bo to najnowszy interfejs ESPHome z HA-styling, grupowaniem encji i wykresami wartosci sensorow.
   - DS18B20 podlaczamy do GPIO33, opisanego na WT32-ETH01 jako `485_EN`, jako wspolna magistrala 1-Wire dla dwoch czujnikow, z wlaczonym wewnetrznym pull-up; zewnetrzny pull-up 4.7 kOhm do 3V3 pozostaje zalecany dla dluzszych przewodow.
   - Pierwszy DS18B20 bedzie uruchomiony bez adresu; drugi zostanie dodany jako stabilna encja po odczytaniu adresow z logow albo po podlaczeniu obu czujnikow.
   - Na razie nie liczymy poziomu procentowego zbiornika, bo nie znamy wysokosci referencyjnej.
@@ -142,3 +144,4 @@ Wymagane sa tez integracja z Home Assistant przez API oraz zdalne aktualizacje O
   - 2026-05-07: Zmiana z WiFi na Ethernet (WT32-ETH01, LAN8720). Usunięto wifi, captive_portal. Ethernet jako jedyny interfejs. Flash przez OTA z WiFi → Ethernet, urządzenie online na 192.168.33.178.
   - 2026-05-08: Zaplanowano FS400A-G1 na GPIO32 i DS18B20 1-Wire na GPIO33.
   - 2026-05-08: Zaplanowano trwaly licznik sumy przeplywu z ograniczeniem zapisow flash.
+  - 2026-05-08: Zaplanowano web_server v3 z grupami encji: Zbiornik, Przeplyw, Serwis.

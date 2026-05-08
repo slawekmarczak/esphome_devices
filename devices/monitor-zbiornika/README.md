@@ -11,6 +11,7 @@ ESPHome dla modulu DYP A02 podlaczonego po UART.
 - mierzy temperature z DS18B20 na magistrali 1-Wire
 - wystawia encje w Home Assistant
 - pokazuje odczyt na web_server ESPHome
+- uzywa web_server v3 z grupami encji i wykresami sensorow
 - wspiera OTA
 
 ## Pliki

@@ -31,6 +31,10 @@
 - [x] Flash OTA na DUT po zmianie licznika — OK, 6 s.
 - [x] Test web_server na DUT — `Przeplyw wody sesja` 0.00 L, `Przeplyw wody suma` 0.00 L, `Przeplyw wody` 0.00 L/min po timeout, `Temperatura zbiornika 1` 28.1 °C, `Odleglosc w zbiorniku` 0.68 m.
 - [x] Test resetu sumy przez web_server — POST `/button/reset_przeplywu_wody_suma/press` OK, suma pozostala 0.00 L.
+- [x] Przelaczono web_server na v3 z grupami `Zbiornik`, `Przeplyw`, `Serwis`.
+- [x] Kompilacja YAML przez MCP po zmianie web_server — OK, 31 s. Ostrzezenia tylko dla znanych pinow strapping GPIO0/GPIO5.
+- [x] Flash OTA na DUT po zmianie web_server — OK, 6 s.
+- [x] Test web_server v3 na DUT — strona glowna laduje `https://oi.esphome.io/v3/www.js`; endpointy sensorow nadal dzialaja: temperatura 27.8 °C, suma przeplywu 0.00 L, odleglosc 0.68 m, przycisk resetu widoczny.
 
 ### Uwagi
 
@@ -38,3 +42,4 @@
 - Wewnetrzny pull-up GPIO33 wystarcza do pierwszych testow na krotkich przewodach. Przy dluzszych przewodach lub niestabilnym odczycie dodac zewnetrzny pull-up 4.7 kOhm do 3V3.
 - Przed resetem endpoint temperatury zwracal `NA`; po resecie sensor zostal wykryty i publikuje odczyt.
 - Trwaly licznik sumy minimalizuje zuzycie flash kosztem mozliwej utraty nieutrwalonego przyrostu ponizej 1 L przy naglym zaniku zasilania.
+- Web server v3 dostarcza wykresy historii sensorow po kliknieciu encji w interfejsie ESPHome.
