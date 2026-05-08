@@ -57,6 +57,41 @@ uart:
   tx_pin: GPIO17
   baud_rate: 9600
   stop_bits: 1
+  debug:
+    direction: RX
+    dummy_receiver: true
+    after:
+      bytes: 4
+    sequence:
+      - lambda: |-
+          static std::vector<uint8_t> buffer;
+          buffer.insert(buffer.end(), bytes.begin(), bytes.end());
+
+          while (buffer.size() >= 4) {
+            if (buffer[0] != 0xFF) {
+              buffer.erase(buffer.begin());
+              continue;
+            }
+
+            const uint8_t high = buffer[1];
+            const uint8_t low = buffer[2];
+            const uint8_t checksum = buffer[3];
+            const uint8_t expected = (0xFF + high + low) & 0xFF;
+
+            if (checksum != expected) {
+              buffer.erase(buffer.begin());
+              continue;
+            }
+
+            const uint16_t distance_mm = (uint16_t(high) << 8) | low;
+            const float distance_m = distance_mm <= 30 ? 0.0f : distance_mm / 1000.0f;
+            id(odleglosc_w_zbiorniku).publish_state(distance_m);
+            buffer.erase(buffer.begin(), buffer.begin() + 4);
+          }
+
+          if (buffer.size() > 16) {
+            buffer.erase(buffer.begin(), buffer.end() - 4);
+          }
 
 one_wire:
   - platform: gpio
@@ -110,8 +145,7 @@ button:
           id(przeplyw_wody_suma).publish_state(0.0f);
 
 sensor:
-  - platform: a02yyuw
-    uart_id: tank_uart
+  - platform: template
     name: "Odleglosc w zbiorniku"
     id: odleglosc_w_zbiorniku
     unit_of_measurement: "m"
@@ -122,7 +156,6 @@ sensor:
       sorting_group_id: sorting_group_tank
       sorting_weight: 10
     filters:
-      - lambda: return x / 1000.0;
       - throttle: 1s
 
   - platform: pulse_meter

@@ -35,6 +35,11 @@
 - [x] Kompilacja YAML przez MCP po zmianie web_server — OK, 31 s. Ostrzezenia tylko dla znanych pinow strapping GPIO0/GPIO5.
 - [x] Flash OTA na DUT po zmianie web_server — OK, 6 s.
 - [x] Test web_server v3 na DUT — strona glowna laduje `https://oi.esphome.io/v3/www.js`; endpointy sensorow nadal dzialaja: temperatura 27.8 °C, suma przeplywu 0.00 L, odleglosc 0.68 m, przycisk resetu widoczny.
+- [x] Zastapiono komponent `a02yyuw` wlasnym parserem UART ramek DYP A02, zeby poprawne ramki ponizej 30 mm publikowaly `0.00 m` zamiast warningu `Invalid data read from sensor`.
+- [x] Kompilacja YAML przez MCP po zmianie parsera DYP A02 — OK, 94 s. Ostrzezenia tylko dla znanych pinow strapping GPIO0/GPIO5.
+- [x] Flash OTA na DUT po zmianie parsera DYP A02 — OK, 6 s.
+- [x] Test web_server na DUT po zmianie parsera — odleglosc publikuje 0.643-0.644 m, temperatura 26.7 °C, suma przeplywu 0.00 L.
+- [x] Test logow UART przez MCP po zmianie parsera — brak linii i brak bledow w 25 s odczytu; warning `a02yyuw.sensor` nie wystapil w odczycie MCP.
 
 ### Uwagi
 
@@ -43,3 +48,4 @@
 - Przed resetem endpoint temperatury zwracal `NA`; po resecie sensor zostal wykryty i publikuje odczyt.
 - Trwaly licznik sumy minimalizuje zuzycie flash kosztem mozliwej utraty nieutrwalonego przyrostu ponizej 1 L przy naglym zaniku zasilania.
 - Web server v3 dostarcza wykresy historii sensorow po kliknieciu encji w interfejsie ESPHome.
+- Bliski zakres DYP A02 `<=30 mm` jest teraz mapowany na `0.00 m`. Test z fizycznym dystansem 0-3 cm wymaga ustawienia przeszkody przy czujniku; zdalnie potwierdzono normalny odczyt i brak komponentu `a02yyuw` w firmware.

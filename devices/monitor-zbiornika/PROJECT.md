@@ -76,7 +76,7 @@ Wymagane sa tez integracja z Home Assistant przez API oraz zdalne aktualizacje O
 
   ### Funkcje firmware
 
-  - Odczyt odleglosci z DYP A02 przez UART 9600
+  - Odczyt odleglosci z DYP A02 przez UART 9600 z parserem ramek `FF HH LL SUM`
   - Odczyt przeplywu z FS400A-G1 przez licznik impulsow
   - Odczyt temperatury z DS18B20 przez 1-Wire
   - Publikacja odczytu jako sensor ESPHome
@@ -116,7 +116,8 @@ Wymagane sa tez integracja z Home Assistant przez API oraz zdalne aktualizacje O
 
   ### Decyzje projektowe
 
-  - Uzywamy wbudowanego komponentu ESPHome dla A02YYUW, bo pasuje do automatycznego UART i nie wymaga lokalnego parsera C++ na start.
+  - Nie uzywamy juz wbudowanego komponentu ESPHome `a02yyuw`, bo traktuje poprawne ramki ponizej zakresu 3 cm jako `Invalid data read from sensor`.
+  - DYP A02 parsujemy przez `uart.debug` z `dummy_receiver: true`: poprawna ramka `FF HH LL SUM` publikuje odleglosc, a wartosci `<=30 mm` sa mapowane na `0.00 m`.
   - FS400A-G1 podlaczamy do GPIO32, bo jest wolnym pinem wejscia/wyjscia na ESP32 i nie koliduje z LAN8720, UART DYP A02 ani pinami strapping.
   - Przeplyw FS400A-G1 liczymy z charakterystyki `Hz = 4.8 * Q[L/min]`, czyli `Q = pulses_per_min / 288`.
   - Sume przeplywu liczymy jako `litry = impulsy / 288`.
@@ -145,3 +146,4 @@ Wymagane sa tez integracja z Home Assistant przez API oraz zdalne aktualizacje O
   - 2026-05-08: Zaplanowano FS400A-G1 na GPIO32 i DS18B20 1-Wire na GPIO33.
   - 2026-05-08: Zaplanowano trwaly licznik sumy przeplywu z ograniczeniem zapisow flash.
   - 2026-05-08: Zaplanowano web_server v3 z grupami encji: Zbiornik, Przeplyw, Serwis.
+  - 2026-05-08: Zaplanowano wlasny parser UART dla DYP A02, zeby ramki z odlegloscia 0-3 cm publikowaly `0.00 m` zamiast warningow `Invalid data read from sensor`.
