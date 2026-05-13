@@ -2,89 +2,92 @@
 esp-rolety-ogrod-zimowy
 ## Raw User Input
 
-Append user requirements here. This section is append-only unless the user
-explicitly asks for edits.
-
 Na bazie tego repozytorium chcę zrobić urządzenie, które będzie służyło do integracji rolet SOMFI RTS z moim Home Assistantem, na bazie ESPHome lub na bazie tego softu, który jest w repozytorium https://github.com/rstrouse/ESPSomfy-RTS
 
 Bazuje na ESP32-C2 Super Mini A mój frontend radiowy to E07-M1101D Podłączę go do optymalnych PIN-ów, które zaproponujesz na wstępie.
 
 Później będziemy testować. Jeśli coś jest niejasne, dopytaj przed kontynuowaniem finalnej pracy 
 
+i will change HW into supported one, give me list of suppoirted
 
 ## Agent-Maintained Spec
 
 ### Goal
 
 Integrate Somfy RTS roller blinds (winter garden) with Home Assistant using
-an ESP32-C2 Super Mini A and an E07-M1101D (CC1101) 433.42 MHz transceiver,
-running ESPHome firmware.
+a standard ESP32 DevKit (ESP32-WROOM-32) and an E07-M1101D (CC1101) 433.42 MHz
+transceiver, running **ESPSomfy-RTS** pre-built firmware.
 
 ### Decisions
 
-- **ESPHome over ESPSomfy-RTS**: ESPSomfy-RTS firmware only supports ESP32 and
-  ESP32-S3. The ESP32-C2 is not supported. ESPHome supports ESP32-C2 via the
-  esp-idf framework, so we implement the Somfy RTS protocol as a custom
-  ESPHome component.
-- **esp-idf framework**: Required — Arduino does not support the ESP32-C2.
-- **WiFi only**: ESP32-C2 has no Ethernet PHY; connectivity is WiFi 802.11b/g/n.
-- **SPI bus on FSPI defaults**: SCK=GPIO6, MOSI=GPIO7, MISO=GPIO2, CS=GPIO10.
-  These are the hardware SPI2 (FSPI) default pins, giving best performance.
-- **CC1101 GDO0→GPIO4 (TX), GDO2→GPIO5 (RX)**: Safe GPIOs that avoid all
-  strapping pins (GPIO0, GPIO8, GPIO9).
+- **ESP32-C2 → ESP32 DevKit**: ESP32-C2 (RISC-V) is not supported by
+  ESPSomfy-RTS. Standard ESP32 DevKit (Xtensa) is the primary target with
+  pre-built binaries.
+- **ESPSomfy-RTS, not ESPHome**: ESPSomfy-RTS is a proven, feature-complete
+  firmware for Somfy RTS blinds. It handles CC1101, protocol timing, rolling
+  codes, pairing, position tracking, web UI, MQTT, and has a dedicated Home
+  Assistant integration (HACS). Using the pre-built binary — no compilation
+  required.
+- **WiFi only**: Standard ESP32 DevKit — no Ethernet.
+- **Arduino framework**: Default for standard ESP32.
 
 ### Hardware
 
-- Module/board: ESP32-C2 Super Mini A (ESP8684, RISC-V, 4 MB flash, WiFi+BLE5)
-- Power: USB-C (5 V), onboard 3.3 V LDO
+- Module/board: ESP32 DevKit V1 (ESP32-WROOM-32, Xtensa dual-core 240 MHz)
+- Flash: 4 MB
+- Power: micro-USB 5 V
 - Network: WiFi 802.11b/g/n (2.4 GHz)
-- Peripherals: E07-M1101D CC1101 433 MHz transceiver (SPI + GDO0/GDO2)
+- RF: Ebyte E07-M1101D CC1101 433.42 MHz transceiver (SPI + GDO0/GDO2)
 
 ### Pinout
 
-| Signal | GPIO | E07-M1101D Pin | Notes |
-|--------|------|----------------|-------|
-| SPI SCK | GPIO6 | 5 (SCK) | FSPI default |
-| SPI MOSI | GPIO7 | 3 (MOSI/SI) | FSPI default |
-| SPI MISO | GPIO2 | 5 (MISO/SO) | FSPI default |
-| SPI CS | GPIO10 | 8 (CSN) | FSPI default |
-| CC1101 GDO0 | GPIO4 | 7 (GDO0) | TX data pin |
-| CC1101 GDO2 | GPIO5 | 6 (GDO2) | RX data pin |
-| VCC 3.3 V | 3V3 | 2 (VCC) | From LDO |
-| GND | GND | 1 (GND) | Common ground |
+ESPSomfy-RTS recommended wiring for E07-M1101D on ESP32 DevKit:
 
-### Firmware Behavior
+| Signal | ESP32 GPIO | E07-M1101D Pin |
+|--------|-----------|----------------|
+| GND | GND | 1 (GND) |
+| 3.3 V | 3V3 | 2 (VCC) |
+| SPI SCK | GPIO18 | 4 (SCK) |
+| SPI MOSI | GPIO23 | 3 (MOSI/SI) |
+| SPI MISO | GPIO19 | 5 (MISO/SO) |
+| SPI CS | GPIO5 | 8 (CSN) |
+| CC1101 GDO0 (TX) | GPIO13 | 7 (GDO0) |
+| CC1101 GDO2 (RX) | GPIO12 | 6 (GDO2) |
 
-- Connect to WiFi, expose Home Assistant Native API and web server.
-- Drive CC1101 over SPI at 433.42 MHz with OOK modulation.
-- Implement Somfy RTS protocol (manchester-encoded 56-bit frames, rolling codes
-  stored in NVS via ESPHome preferences).
-- Expose each paired blind as an ESPHome `cover` entity (open/close/stop/position).
-- Support pairing (PROG command) via a service or button entity.
+### Firmware
 
-### ESPHome Entities
+ESPSomfy-RTS from https://github.com/rstrouse/ESPSomfy-RTS
+- Pre-built binary: `SomfyController.ino.esp32.bin` (downloaded from releases)
+- Supports up to 32 shades, 16 groups
+- Web interface at http://<device-ip>
+- Home Assistant integration via HACS: `ESPSomfy-RTS HA`
 
-- `cover.roleta_1` … `cover.roleta_N` — Somfy RTS cover per blind
-- `button.paruj_rolete_N` — Trigger PROG pairing for blind N
-- `sensor.cc1101_rssi` — RSSI from last received frame (diagnostic)
-- `text_sensor.wifi_ip` — Device IP address (diagnostic)
+### Flashing
 
-### Flashing And Update Path
-
-- Compile through `~/esphome_agent`.
-- First flash via UART through flashpoint.
-- Prefer OTA once networking works.
+1. Download binary:
+   ```
+   wget https://github.com/rstrouse/ESPSomfy-RTS/releases/latest/download/SomfyController.ino.esp32.bin
+   ```
+2. Enter download mode: hold BOOT, press EN, release EN, release BOOT
+3. Flash via esptool:
+   ```
+   esptool.py --chip esp32 --port /dev/ttyUSB0 write_flash 0x0 SomfyController.ino.esp32.bin
+   ```
+4. Reboot. Device creates WiFi AP `ESPSomfy-RTS`.
+5. Connect to AP, configure target WiFi network.
+6. Open web interface, pair blinds.
+7. OTA updates built into ESPSomfy-RTS web interface.
 
 ### Validation Plan
 
-- Compile via MCP.
-- Flash via UART (first) or OTA (subsequent).
-- Reset via MCP.
-- Read UART logs — verify WiFi connection and SPI init.
-- Check HTTP/web and Native API.
+- Flash ESPSomfy-RTS firmware via USB-UART.
+- Verify WiFi AP appears.
+- Configure WiFi and verify web interface.
+- Pair one blind, test open/close/stop/my.
+- Verify original Telis remote still works.
 - Record results in `test-log.md`.
 
 ### Open Questions
 
-- How many blinds to configure? (Starting with 1, user can expand.)
-- What is the target WiFi SSID/password? (Will use `!secret` references.)
+- How many blinds to configure initially?
+- Flash method: first flash via USB-UART (local) or via flashpoint/RPI?

@@ -1,24 +1,39 @@
 # Rolety Ogrod Zimowy
 
-ESPHome controller for Somfy RTS roller blinds in the winter garden.
+Sterownik Somfy RTS dla rolet w ogrodzie zimowym.
 
-## Hardware
+## Sprzęt
 
-- ESP32-C2 Super Mini A
-- Ebyte E07-M1101D (CC1101 433 MHz transceiver)
-- Dupont wiring (8 connections)
+- ESP32 DevKit V1 (ESP32-WROOM-32)
+- Ebyte E07-M1101D (transceiver CC1101 433 MHz)
+- Połączenie przez przewody Dupont (8 pinów)
 
-## Wiring
+## Okablowanie
 
-See `hardware.md` for full pin-by-pin wiring table.
-
-## Setup
-
-1. Copy `secrets.yaml` and fill in real credentials.
-2. Compile and flash via the MCP pipeline (`~/esphome_agent`).
-3. Pair blinds using the pairing button in Home Assistant.
+Szczegółowa tabela pinów w `hardware.md`.
 
 ## Firmware
 
-ESPHome with esp-idf framework. The Somfy RTS protocol is implemented as
-custom C++ code driving the CC1101 transceiver over SPI.
+[ESPSomfy-RTS](https://github.com/rstrouse/ESPSomfy-RTS) — gotowy firmware
+dla ESP32, obsługa do 32 rolet, interfejs webowy, MQTT, integracja z
+Home Assistant (HACS).
+
+### Pierwsze wgranie
+
+```bash
+# Pobierz binarkę
+wget https://github.com/rstrouse/ESPSomfy-RTS/releases/latest/download/SomfyController.ino.esp32.bin
+
+# Wgraj przez USB (ESP32 w trybie download: przytrzymaj BOOT, naciśnij EN, puść EN, puść BOOT)
+esptool.py --chip esp32 --port /dev/ttyUSB0 write_flash 0x0 SomfyController.ino.esp32.bin
+```
+
+### Konfiguracja
+
+Po wgraniu firmware, urządzenie utworzy sieć WiFi `ESPSomfy-RTS`.
+Połącz się, skonfiguruj docelową sieć WiFi i sparuj rolety przez panel webowy.
+
+## Integracja z Home Assistant
+
+[ESPSomfy-RTS HA Integration](https://github.com/rstrouse/ESPSomfy-RTS-HA) —
+dostępna przez HACS.
