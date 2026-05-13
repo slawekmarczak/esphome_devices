@@ -1,0 +1,57 @@
+substitutions:
+  device_name: esp-rolety-ogrod-zimowy
+  friendly_name: Rolety Ogrod Zimowy
+
+esphome:
+  name: ${device_name}
+  friendly_name: ${friendly_name}
+
+esp32:
+  board: esp32-c2-devkitm-1
+  variant: esp32c2
+  framework:
+    type: esp-idf
+
+logger:
+  level: DEBUG
+
+api:
+  reboot_timeout: 0s
+  encryption:
+    key: !secret api_key
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  ap:
+    ssid: "${device_name}"
+    password: !secret ap_password
+
+web_server:
+  port: 80
+  version: 3
+
+spi:
+  id: cc1101_spi
+  clk_pin: GPIO6
+  mosi_pin: GPIO7
+  miso_pin: GPIO2
+
+status_led:
+  pin:
+    number: GPIO8
+    inverted: true
+
+sensor:
+  - platform: wifi_signal
+    name: "Sygnal WiFi"
+    update_interval: 60s
+
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: "Adres IP"
